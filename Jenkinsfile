@@ -9,7 +9,7 @@ pipeline {
         IMAGE = "neathtan/auto_nextcd"
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = 'neathtan'
-        GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_nextjs_manifest"
+        GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_nextjs_manifest.git"
         GIT_BRANCH = "master"
         MANIFEST_REPO = "manifest-repo"
         MANIFEST_FILE_PATH = "deployment.yaml"
