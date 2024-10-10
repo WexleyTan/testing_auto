@@ -51,13 +51,17 @@ pipeline {
                 echo "Checking if the manifest repository exists and removing it if necessary..."
                 sh """
                     cd ..
+                    pwd
+                    echo "--------------------------"
                     echo "this is: ${env.GIT_MANIFEST_REPO}"
                     if [ -d "${env.MANIFEST_REPO}" ]; then
                       echo "DIRECTORY does exist."
                       rm -rf ${env.MANIFEST_REPO}
                     fi
                     git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO}
+                    pwd
                     ls -l
+                    echo "--------------------------------------------"
                  """
                 echo "Cloning the manifest repository..."
             }
@@ -69,7 +73,10 @@ pipeline {
                     echo "Updating the image in the deployment manifest..."
                     sh """
                     cd ..
-                    sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
+                    pwd
+                    ls -l
+                    echo "--------------------------------------------"
+                    sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE} |' ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     cat  ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     """
                 }
