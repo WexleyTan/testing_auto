@@ -78,39 +78,29 @@ pipeline {
                     echo "--------------------------------------------"
                     sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     cat  ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
+                    cd ${env.MANIFEST_REPO}
+                    git branch
+                    git add .
+                              git commit -m "hj"
+                              echo "---------------Committed-------------------"
+                              git push https://${GIT_USER}:${GIT_PASS}@${env.GIT_MANIFEST_REPO}
                     """
+                    
                 }
             }
         }
 
-        stage("Push Changes to the Manifest Repository") {
-            steps {
-                script {
-                    dir("${env.MANIFEST_REPO}") {
-                        withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
-                            sh """
-                            cd ..
-                            cd ${env.MANIFEST_REPO}
-                            git config --global user.name "WexleyTan"
-                            git config --global user.email "neathtan1402@gmail.com"
-                            git branch
-                            ls -l
-                            pwd
-                            echo "Start pushing to manifest repo"
-                            """
-                            sh """
-                              pwd 
-                              cd ..
-                              cd ${env.MANIFEST_REPO}
-                              git add .
-                              git commit -m "hj"
-                              echo "---------------Committed-------------------"
-                              git push https://${GIT_USER}:${GIT_PASS}@${env.GIT_MANIFEST_REPO}
-                            """
-                        }
-                    }
-                }
-            }
+        // stage("Push Changes to the Manifest Repository") {
+        //     steps {
+        //         script {
+        //             dir("${env.MANIFEST_REPO}") {
+        //                 withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
+        //                     sh """
+                            
+        //                 }
+        //             }
+        //         }
+        //     }
         }
     }
 }
