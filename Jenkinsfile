@@ -54,7 +54,7 @@ pipeline {
                 //         rm -rf ${env.MANIFEST_REPO}
                 //     fi
                 // '''
-                rm -r ${env.MANIFEST_REPO} > /dev/null
+                rm -r "${env.MANIFEST_REPO}" > /dev/null
                 echo "Cloning the manifest repository..."
                 sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO}"
                 sh "ls -l"
