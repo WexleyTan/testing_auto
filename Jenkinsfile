@@ -78,13 +78,20 @@ pipeline {
                     echo "--------------------------------------------"
                     sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     cat  ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
-                    cd ${env.MANIFEST_REPO}
+                    
+                    """
+                    dir("${env.MANIFEST_REPO}") {
+                        withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
+                            sh """
+                             cd ${env.MANIFEST_REPO}
                     git branch
                     git add .
                               git commit -m "hj"
                               echo "---------------Committed-------------------"
                               git push https://${GIT_USER}:${GIT_PASS}@${env.GIT_MANIFEST_REPO}
-                    """
+                            """   
+                        }
+                    }
                     
                 }
             }
