@@ -55,7 +55,7 @@ pipeline {
                     fi
                 '''
                 echo "Cloning the manifest repository..."
-                sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO} ${env.MANIFEST_REPO}"
+                sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO}"
                 sh "ls -l"
             }
         }
