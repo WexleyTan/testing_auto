@@ -7,7 +7,7 @@ pipeline {
     }
     environment {
         IMAGE = "neathtan/auto_nextcd"
-        DOCKER_IMAGE = "${IMAGE}"
+        DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = "dockertoken"
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_nextjs_manifest.git"
         GIT_BRANCH = "master"
@@ -76,7 +76,7 @@ pipeline {
             steps {
                 script {
                     dir("${env.MANIFEST_REPO}") {
-                        withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'git_new', usernameVariable: 'GIT_USER')]) {
+                        withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
                             sh """
                             git config --global user.name "WexleyTan"
                             git config --global user.email "neathtan1402@gmail.com"
@@ -86,7 +86,7 @@ pipeline {
                             echo "Start pushing to manifest repo"
                             git add ${env.MANIFEST_FILE_PATH}
                             git commit -m "Update image to ${env.DOCKER_IMAGE}"
-                            git push https://${GIT_USER}:${git_new}@github.com/WexleyTan/auto_nextjs_manifest.git
+                            git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_nextjs_manifest.git
                             """
                         }
                     }
