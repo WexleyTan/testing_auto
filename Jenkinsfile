@@ -8,7 +8,7 @@ pipeline {
     environment {
         IMAGE = "neathtan/auto_nextcd"
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
-        DOCKER_CREDENTIALS_ID = 'neathtan'
+        DOCKER_CREDENTIALS_ID = 'dockertoken'
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_nextjs_manifest.git"
         GIT_BRANCH = "master"
         MANIFEST_REPO = "manifest-repo"
