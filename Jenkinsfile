@@ -50,9 +50,9 @@ pipeline {
                 echo "Checking if the manifest repository exists and removing it if necessary..."
                 sh """
                     echo "this is: ${env.GIT_MANIFEST_REPO}"
-                    if [ -d "${env.GIT_MANIFEST_REPO}" ]; then
+                    if [ -d "${env.MANIFEST_REPO}" ]; then
                       echo "DIRECTORY does exist."
-                      rm -rf ${env.GIT_MANIFEST_REPO}
+                      rm -rf ${env.MANIFEST_REPO}
                     fi
                  """
                 echo "Cloning the manifest repository..."
