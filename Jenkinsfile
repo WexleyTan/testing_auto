@@ -49,6 +49,7 @@ pipeline {
                 sh "ls -l"
                 echo "Checking if the manifest repository exists and removing it if necessary..."
                 sh """
+                    echo "this is: ${env.GIT_MANIFEST_REPO}"
                     if [ -d "${env.GIT_MANIFEST_REPO}" ]; then
                       echo "DIRECTORY does exist."
                       rm -rf ${env.GIT_MANIFEST_REPO}
