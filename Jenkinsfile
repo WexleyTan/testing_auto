@@ -99,7 +99,7 @@ pipeline {
                             echo "Start pushing to manifest repo"
                             git add .
                             git commit -m "Update image to ${env.DOCKER_IMAGE}"
-                            git push https://${GIT_USER}:${GIT_PASS}@${GIT_MANIFEST_REPO}
+                            git push origin ${GIT_BRANCH}
                             """
                         }
                     }
