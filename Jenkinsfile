@@ -50,7 +50,7 @@ pipeline {
                 echo "Checking if the manifest repository exists and removing it if necessary..."
                 sh '''
                     
-                        rm -rf ${env.MANIFEST_REPO}
+                        rm -rf ${env.MANIFEST_REPO} > /dev/null
                 
                 '''
                 echo "Cloning the manifest repository..."
