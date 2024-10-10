@@ -47,6 +47,7 @@ pipeline {
             steps {
                 sh "pwd"
                 sh "ls -l"
+                sh "cd .."
                 echo "Checking if the manifest repository exists and removing it if necessary..."
                 sh """
                     echo "this is: ${env.GIT_MANIFEST_REPO}"
@@ -67,6 +68,7 @@ pipeline {
                     echo "Updating the image in the deployment manifest..."
                     sh """
                     sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
+                    cat  ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     """
                 }
             }
@@ -78,13 +80,14 @@ pipeline {
                     dir("${env.MANIFEST_REPO}") {
                         withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
                             sh """
+                            cd ${env.MANIFEST_REPO}
                             git config --global user.name "WexleyTan"
                             git config --global user.email "neathtan1402@gmail.com"
                             git branch
                             ls -l
                             pwd
                             echo "Start pushing to manifest repo"
-                            git add ${env.MANIFEST_FILE_PATH}
+                            git add .
                             git commit -m "Update image to ${env.DOCKER_IMAGE}"
                             git push https://${GIT_USER}:${GIT_PASS}@${GIT_MANIFEST_REPO}
                             """
