@@ -8,12 +8,13 @@ pipeline {
     environment {
         IMAGE = "neathtan/auto_nextcd"
         DOCKER_IMAGE = "${IMAGE}"
-        DOCKER_CREDENTIALS_ID = 'neathtan'
+        DOCKER_CREDENTIALS_ID = "dockertoken"
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_nextjs_manifest.git"
         GIT_BRANCH = "master"
         MANIFEST_REPO = "manifest-repo"
         MANIFEST_FILE_PATH = "deployment.yaml"
         GIT_CREDENTIALS_ID = 'git_new'
+        
     }
     stages {
         stage("checkout") {
@@ -74,7 +75,7 @@ pipeline {
             steps {
                 script {
                     dir("${env.MANIFEST_REPO}") {
-                        withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
+                        withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'git_new', usernameVariable: 'GIT_USER')]) {
                             sh """
                             git config --global user.name "WexleyTan"
                             git config --global user.email "neathtan1402@gmail.com"
