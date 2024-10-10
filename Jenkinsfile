@@ -76,7 +76,7 @@ pipeline {
                     pwd
                     ls -l
                     echo "--------------------------------------------"
-                    sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE} |' ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
+                    sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     cat  ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     """
                 }
