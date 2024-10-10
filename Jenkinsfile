@@ -14,13 +14,12 @@ pipeline {
         MANIFEST_REPO = "auto_nextjs_manifest"
         MANIFEST_FILE_PATH = "deployment.yaml"
         GIT_CREDENTIALS_ID = 'git_new'
-        
     }
     stages {
-        stage("checkout") {
+        stage("Checkout") {
             steps {
                 echo "Running on $NODE_NAME"
-                echo "${BUILD_NUMBER}"
+                echo "Build Number: ${BUILD_NUMBER}"
                 sh 'docker image prune --all -f'
                 sh 'pwd'
                 sh 'ls'
@@ -45,25 +44,21 @@ pipeline {
 
         stage("Cloning the Manifest File") {
             steps {
-                sh "pwd"
-                sh "ls -l"
-               
-                echo "Checking if the manifest repository exists and removing it if necessary..."
-                sh """
-                    cd ..
-                    pwd
-                    echo "--------------------------"
-                    echo "this is: ${env.GIT_MANIFEST_REPO}"
-                    if [ -d "${env.MANIFEST_REPO}" ]; then
-                      echo "DIRECTORY does exist."
-                      rm -rf ${env.MANIFEST_REPO}
-                    fi
-                    git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO}
-                    pwd
-                    ls -l
-                    echo "--------------------------------------------"
-                 """
-                echo "Cloning the manifest repository..."
+                script {
+                    echo "Checking if the manifest repository exists and removing it if necessary..."
+                    sh """
+                        if [ -d "${env.MANIFEST_REPO}" ]; then
+                            echo "Directory ${env.MANIFEST_REPO} exists, removing it..."
+                            rm -rf ${env.MANIFEST_REPO}
+                        fi
+                    """
+                    
+                    echo "Cloning the manifest repository..."
+                    sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO} ${env.MANIFEST_REPO}"
+                    
+                    echo "Directory structure after cloning:"
+                    sh "ls -l"
+                }
             }
         }
 
@@ -71,44 +66,34 @@ pipeline {
             steps {
                 script {
                     echo "Updating the image in the deployment manifest..."
-                    sh """
-                    cd ..
-                    pwd
-                    ls -l
-                    echo "--------------------------------------------"
-                    sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
-                    cat  ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     
-                    """
+                    // Use the `dir` command to operate within the manifest repository
                     dir("${env.MANIFEST_REPO}") {
+                        sh """
+                            pwd
+                            sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_FILE_PATH}
+                            echo "Updated deployment file:"
+                            cat ${env.MANIFEST_FILE_PATH}
+                        """
+                        
+                        echo "Committing and pushing changes to the manifest repository..."
                         withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
                             sh """
-                             cd ${env.MANIFEST_REPO}
-                    git branch
-                    git add .
-                              git commit -m "hj"
-                              echo "---------------Committed-------------------"
-                              git push https://${GIT_USER}:${GIT_PASS}@${env.GIT_MANIFEST_REPO}
-                            """   
+                                git config --global user.name "WexleyTan"
+                                git config --global user.email "neathtan1402@gmail.com"
+                                git add ${env.MANIFEST_FILE_PATH}
+                                git commit -m "Update image to ${env.DOCKER_IMAGE}"
+                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_nextjs_manifest.git ${env.GIT_BRANCH}
+                            """
                         }
                     }
-                    
                 }
             }
         }
-
-        // stage("Push Changes to the Manifest Repository") {
-        //     steps {
-        //         script {
-        //             dir("${env.MANIFEST_REPO}") {
-        //                 withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
-        //                     sh """
-                            
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+    }
+    post {
+        always {
+            cleanWs()
+        }
     }
 }
-
