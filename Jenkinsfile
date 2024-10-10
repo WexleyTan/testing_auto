@@ -98,8 +98,9 @@ pipeline {
                             pwd
                             echo "Start pushing to manifest repo"
                             git add .
-                            git commit -m "Update image to ${env.DOCKER_IMAGE}"
-                            git push origin ${GIT_BRANCH}
+                            git commit -m "image to ${env.DOCKER_IMAGE}"
+                            echo "---------------Committed-------------------"
+                            git push https://${GIT_USER}:${GIT_PASS}@${env.GIT_MANIFEST_REPO}
                             """
                         }
                     }
