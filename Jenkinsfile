@@ -47,18 +47,19 @@ pipeline {
             steps {
                 sh "pwd"
                 sh "ls -l"
-                sh "cd .."
+               
                 echo "Checking if the manifest repository exists and removing it if necessary..."
                 sh """
+                    cd ..
                     echo "this is: ${env.GIT_MANIFEST_REPO}"
                     if [ -d "${env.MANIFEST_REPO}" ]; then
                       echo "DIRECTORY does exist."
                       rm -rf ${env.MANIFEST_REPO}
                     fi
+                    git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO}
+                    ls -l
                  """
                 echo "Cloning the manifest repository..."
-                sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO}"
-                sh "ls -l"
             }
         }
 
@@ -67,6 +68,7 @@ pipeline {
                 script {
                     echo "Updating the image in the deployment manifest..."
                     sh """
+                    cd ..
                     sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     cat  ${env.MANIFEST_REPO}/${env.MANIFEST_FILE_PATH}
                     """
@@ -80,6 +82,7 @@ pipeline {
                     dir("${env.MANIFEST_REPO}") {
                         withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
                             sh """
+                            cd ..
                             cd ${env.MANIFEST_REPO}
                             git config --global user.name "WexleyTan"
                             git config --global user.email "neathtan1402@gmail.com"
