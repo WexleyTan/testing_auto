@@ -13,7 +13,7 @@ pipeline {
         GIT_BRANCH = "master"
         MANIFEST_REPO = "manifest-repo"
         MANIFEST_FILE_PATH = "deployment.yaml"
-        GIT_CREDENTIALS_ID = 'GIT_HUB'
+        GIT_CREDENTIALS_ID = 'git_new'
     }
     stages {
         stage("checkout") {
@@ -74,7 +74,7 @@ pipeline {
             steps {
                 script {
                     dir("${env.MANIFEST_REPO}") {
-                        withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
+                        withCredentials([usernamePassword(credentialsId: env.GIT   _CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
                             sh """
                             git config --global user.name "WexleyTan"
                             git config --global user.email "neathtan1402@gmail.com"
