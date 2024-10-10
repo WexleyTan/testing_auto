@@ -21,8 +21,6 @@ pipeline {
                 echo "Running on $NODE_NAME"
                 echo "Build Number: ${BUILD_NUMBER}"
                 sh 'docker image prune --all -f'
-                sh 'pwd'
-                sh 'ls'
             }
         }
 
@@ -55,9 +53,6 @@ pipeline {
                     
                     echo "Cloning the manifest repository..."
                     sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO} ${env.MANIFEST_REPO}"
-                    
-                    echo "Directory structure after cloning:"
-                    sh "ls -l"
                 }
             }
         }
