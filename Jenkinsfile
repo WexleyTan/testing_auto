@@ -97,10 +97,15 @@ pipeline {
                             ls -l
                             pwd
                             echo "Start pushing to manifest repo"
-                            git add .
-                            git commit -m "hj"
-                            echo "---------------Committed-------------------"
-                            git push https://${GIT_USER}:${GIT_PASS}@${env.GIT_MANIFEST_REPO}
+                            """
+                            sh """
+                              pwd 
+                              cd ..
+                              cd ${env.MANIFEST_REPO}
+                              git add .
+                              git commit -m "hj"
+                              echo "---------------Committed-------------------"
+                              git push https://${GIT_USER}:${GIT_PASS}@${env.GIT_MANIFEST_REPO}
                             """
                         }
                     }
