@@ -11,7 +11,7 @@ pipeline {
         DOCKER_CREDENTIALS_ID = "dockertoken"
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_nextjs_manifest.git"
         GIT_BRANCH = "master"
-        MANIFEST_REPO = "manifest-repo"
+        MANIFEST_REPO = "auto_nextjs_manifest"
         MANIFEST_FILE_PATH = "deployment.yaml"
         GIT_CREDENTIALS_ID = 'git_new'
         
