@@ -48,11 +48,12 @@ pipeline {
                 sh "pwd"
                 sh "ls -l"
                 echo "Checking if the manifest repository exists and removing it if necessary..."
-                sh '''
-                    
-                        rm -rf ${env.MANIFEST_REPO} > /dev/null
-                
-                '''
+                sh """
+                    if [ -d "${env.GIT_MANIFEST_REPO}" ]; then
+                      echo "DIRECTORY does exist."
+                      rm -rf ${env.GIT_MANIFEST_REPO}
+                    fi
+                 """
                 echo "Cloning the manifest repository..."
                 sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO}"
                 sh "ls -l"
