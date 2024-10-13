@@ -43,7 +43,7 @@ pipeline {
             }
         }
 
-        stage("Cloning the Manifest File") {
+       stage("Cloning the Manifest File") {
             steps {
                 script {
                     echo "Checking if the manifest repository exists and removing it if necessary..."
@@ -55,7 +55,7 @@ pipeline {
                     """
                     
                     echo "Cloning the manifest repository..."
-                    sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO} ${env.MANIFEST_REPO}" 
+                    sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO} ${env.MANIFEST_REPO}"
                 }
             }
         }
@@ -63,20 +63,23 @@ pipeline {
         stage("Updating the Manifest File") {
             steps {
                 script {
-                    dir("${MANIFEST_REPO}") {
+                    echo "Updating the image in the deployment manifest..."
+                    
+                    dir("${env.MANIFEST_REPO}") {
                         sh """
-                            sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_FILE_PATH} 
-                            echo "Updated deployment file:"
+                            sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_FILE_PATH}
+                            echo ${DOCKER_IMAGE}
                         """
                         
                         echo "Committing and pushing changes to the manifest repository..."
-                        withCredentials([usernamePassword(credentialsId: "${GIT_CREDENTIALS_ID}", passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
+                        withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
                             sh """
+                                cat ${MANIFEST_FILE_PATH}
                                 git config --global user.name "WexleyTan"
                                 git config --global user.email "neathtan1402@gmail.com"
-                                git add ${MANIFEST_FILE_PATH} 
-                                git commit -m "Update image to ${DOCKER_IMAGE}" 
-                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_nextjs_manifest.git ${GIT_BRANCH} 
+                                git add ${MANIFEST_FILE_PATH}
+                                git commit -m "Update image to ${DOCKER_IMAGE}"
+                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_nextjs_manifest.git ${GIT_BRANCH}
                             """
                         }
                     }
