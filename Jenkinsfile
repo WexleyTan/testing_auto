@@ -1,19 +1,17 @@
 pipeline {
-    agent {
-        label 'b'
-    }
+    agent any
     tools {
         nodejs 'nodejs'
     }
     environment {
-        IMAGE = "neathtan/auto_nextcd"
+        IMAGE = "neathtan/nextjs-adv"
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = "dockertoken"
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_nextjs_manifest.git"
         GIT_BRANCH = "master"
         MANIFEST_REPO = "auto_nextjs_manifest"
         MANIFEST_FILE_PATH = "deployment.yaml"
-        GIT_CREDENTIALS_ID = 'git_new'
+        GIT_CREDENTIALS_ID = 'git_pass'
     }
     stages {
         stage("Checkout") {
