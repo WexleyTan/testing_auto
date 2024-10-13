@@ -59,14 +59,10 @@ pipeline {
             steps {
                 script {
                     echo "Updating the image in the deployment manifest..."
-                    
-                    // Use the `dir` command to operate within the manifest repository
                     dir("${env.MANIFEST_REPO}") {
                         sh """
-                            pwd
                             sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_FILE_PATH}
                             echo "Updated deployment file:"
-                            cat ${env.MANIFEST_FILE_PATH}
                         """
                         
                         echo "Committing and pushing changes to the manifest repository..."
