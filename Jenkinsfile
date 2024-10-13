@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        nodejs 'nodejs'
+        nodejs 'nodejs' 
     }
     environment {
         IMAGE = "neathtan/nextjs-adv"
@@ -13,12 +13,15 @@ pipeline {
         MANIFEST_FILE_PATH = "deployment.yaml"
         GIT_CREDENTIALS_ID = 'git_pass'
     }
+
     stages {
         stage("Checkout") {
             steps {
-                echo "Running on $NODE_NAME"
-                echo "Build Number: ${BUILD_NUMBER}"
-                sh 'docker image prune --all -f'
+                script {
+                    echo "Running on $NODE_NAME"
+                    echo "Build Number: ${BUILD_NUMBER}"
+                    sh 'docker image prune --all -f' 
+                }
             }
         }
 
@@ -26,13 +29,15 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image..."
-                    sh "docker build -t ${env.DOCKER_IMAGE} ."
+                    sh "docker build -t ${env.DOCKER_IMAGE} ." 
+                    
+                    echo "Listing Docker images..."
                     sh "docker images | grep -i ${env.IMAGE}"
                     
-                    echo "Pushing the image to Docker Hub"
+                    echo "Pushing the image to Docker Hub..."
                     withCredentials([usernamePassword(credentialsId: "${env.DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                        sh "docker push ${env.DOCKER_IMAGE}"
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin' 
+                        sh "docker push ${env.DOCKER_IMAGE}" 
                     }
                 }
             }
@@ -50,7 +55,7 @@ pipeline {
                     """
                     
                     echo "Cloning the manifest repository..."
-                    sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO} ${env.MANIFEST_REPO}"
+                    sh "git clone -b ${env.GIT_BRANCH} ${env.GIT_MANIFEST_REPO} ${env.MANIFEST_REPO}" 
                 }
             }
         }
@@ -61,18 +66,19 @@ pipeline {
                     echo "Updating the image in the deployment manifest..."
                     dir("${env.MANIFEST_REPO}") {
                         sh """
-                            sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_FILE_PATH}
+                            sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_FILE_PATH} 
                             echo "Updated deployment file:"
+                            cat ${env.MANIFEST_FILE_PATH} 
                         """
                         
                         echo "Committing and pushing changes to the manifest repository..."
-                        withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
+                        withCredentials([usernamePassword(credentialsId: "${env.GIT_CREDENTIALS_ID}", passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
                             sh """
                                 git config --global user.name "WexleyTan"
                                 git config --global user.email "neathtan1402@gmail.com"
-                                git add ${env.MANIFEST_FILE_PATH}
-                                git commit -m "Update image to ${env.DOCKER_IMAGE}"
-                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_nextjs_manifest.git ${env.GIT_BRANCH}
+                                git add ${env.MANIFEST_FILE_PATH} 
+                                git commit -m "Update image to ${DOCKER_IMAGE}" 
+                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_nextjs_manifest.git ${GIT_BRANCH} 
                             """
                         }
                     }
@@ -81,3 +87,4 @@ pipeline {
         }
     }
 }
+
