@@ -65,13 +65,12 @@ pipeline {
                 script {
                     dir("${MANIFEST_REPO}") {
                         sh """
-                            sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_FILE_PATH} 
+                            sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_FILE_PATH} 
                             echo "Updated deployment file:"
-                            cat ${env.MANIFEST_FILE_PATH} 
                         """
                         
                         echo "Committing and pushing changes to the manifest repository..."
-                        withCredentials([usernamePassword(credentialsId: "${env.GIT_CREDENTIALS_ID}", passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
+                        withCredentials([usernamePassword(credentialsId: "${GIT_CREDENTIALS_ID}", passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
                             sh """
                                 git config --global user.name "WexleyTan"
                                 git config --global user.email "neathtan1402@gmail.com"
